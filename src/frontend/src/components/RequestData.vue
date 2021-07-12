@@ -53,7 +53,7 @@
     methods: {
       requestData () {
         const connection = new WebSocket(this.url)
-        connection.onopen = async () => {
+        connection.onopen = () => {
           // insert data as it arrives from the socket
           connection.send(`{ "salida": "${this.salida}", "destino": "${this.destino}", "hora": "${this.hora}" }`)          
           // alert('Obteniendo datos desde...')
