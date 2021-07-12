@@ -5,6 +5,8 @@ let WebSocketServer = require('ws').Server
 const WebSocket = require('ws')
 let wss = new WebSocketServer({port: 8181})
 let uuid = require('uuid')
+const {readFile} = require("fs");
+const { result } = require('underscore')
 
 function initialize () {
   clients = []
@@ -15,7 +17,7 @@ function initialize () {
 function leerExcel6_7(id_salida, id_destino, hora) {
   var interval = hora.split(':')
   let salida, destino, minute_one, seconds_one, minute_two, seconds_two
-  let resultados = []
+  let datos = []
   salida = id_salida.match(/(\d+)/)
   destino = id_destino.match(/(\d+)/)
   console.log(salida[0])
@@ -34,34 +36,35 @@ function leerExcel6_7(id_salida, id_destino, hora) {
     console.log('segundos minimo intervalo 6-7:', seconds_one)
     console.log('segundos maximo intervalo 6-7', seconds_two)
   }
-  xlsxFile('./preprocesado 6-7.xlsx', { sheet: 'Matrices 15 minutos' }, { defval:" " }).then((rows) => {
+  
+  let resultados = []
+  xlsxFile('./preprocesado 6-7.xlsx', { sheet: 'Matrices 15 minutos' }).then((rows) => {
     for (i in rows) {
-      // for (j in rows[i]) {
-        // if (destino.includes('96')) {
-        // resultados.push(rows)
-      // const found = rows.find(element => element == seconds_one)
-      // if (found) {
-        console.log(rows[i])
-      // }
-      // }
-      // }
+      datos = (rows[i].filter(x => x !== null))
+      resultados.push(datos)
     }
-  });
-    // const dataExcel = xlsx.utils.sheet_to_json()
-    // // console.table(rows)
-    // console.log(dataExcel)
-    // let XLSX = require('xlsx');
-    // const workbook = XLSX.readFile('preprocesado 6-7.xlsx');
-    // const sheet_name_list = workbook.SheetNames;
-    // let jsonPagesArray = [];
-    // sheet_name_list.forEach(function(sheet) {
-    //         const jsonPage = {
-    //             name: sheet,
-    //             content: JSON.parse(JSON.stringify(XLSX.utils.sheet_to_json(workbook.Sheets[sheet],{defval:" "})))
-    //         };
-    //         jsonPagesArray.push(jsonPage);
-    //     });
-    // console.log(jsonPagesArray[1].content);
+    if (seconds_one === 0 && seconds_two === 900) {
+      if (destino.includes('96')) {
+        resultados.slice(0,20).forEach(element => {
+          console.log(element)
+        })
+        // for (var i = 0; i < resultados.splice(0,20).length; i++) {
+        //   if (resultados[i].splice(0,20).filter(element => element === salida)) {
+        //     console.log(resultados[i])
+        //   }
+        // }        
+      }
+    }
+    if (seconds_one === 900 && seconds_two === 1800) {  
+      console.log(resultados.slice(78, 156))
+    }
+    if (seconds_one === 1800 && seconds_two === 2700) {  
+      console.log(resultados.slice(156, 234))
+    }
+    if (seconds_one === 2700 && seconds_two === 3600) {  
+      console.log(resultados.slice(234, 320))
+    }
+  })
 }
 
 function leerExcel7_8(id_salida, id_destino, hora) {
@@ -85,15 +88,6 @@ function leerExcel7_8(id_salida, id_destino, hora) {
     console.log('segundos minimo intervalo 7-8:', seconds_one)
     console.log('segundos maximo intervalo 7-8', seconds_two)
   }
-  // xlsxFile('./preprocesado 7-8.xlsx', { sheet: 'Matrices 15 minutos' }, { defval:" " }).then((rows) => {
-  //   for (i in rows) {
-  //     // for (j in rows[i]) {
-  //       // if (destino.includes('96')) {
-  //       // console.log(rows[i])
-  //       // }
-  //     // }
-  //   }
-  // });
 }
 
 function leerExcel8_9(id_salida, id_destino, hora) {
@@ -117,15 +111,6 @@ function leerExcel8_9(id_salida, id_destino, hora) {
     console.log('segundos minimo intervalo 8-9:', seconds_one)
     console.log('segundos maximo intervalo 8-9', seconds_two)
   }
-  // xlsxFile('./preprocesado 8-9.xlsx', { sheet: 'Matrices 15 minutos' }, { defval:" " }).then((rows) => {
-  //   for (i in rows) {
-  //     // for (j in rows[i]) {
-  //       // if (destino.includes('96')) {
-  //       // console.log(rows[i])
-  //       // }
-  //     // }
-  //   }
-  // });
 }
 
 wss.on('connection', function (websocket) {
