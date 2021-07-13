@@ -1,12 +1,10 @@
 let _ = require('underscore')
 const xlsxFile = require('read-excel-file/node')
-const xlsx = require('xlsx')
+// const xlsx = require('xlsx')
 let WebSocketServer = require('ws').Server
 const WebSocket = require('ws')
 let wss = new WebSocketServer({port: 8181})
 let uuid = require('uuid')
-const {readFile} = require("fs");
-const { result } = require('underscore')
 
 function initialize () {
   clients = []
@@ -45,14 +43,30 @@ function leerExcel6_7(id_salida, id_destino, hora) {
     }
     if (seconds_one === 0 && seconds_two === 900) {
       if (destino.includes('96')) {
-        resultados.slice(0,20).forEach(element => {
-          console.log(element)
-        })
-        // for (var i = 0; i < resultados.splice(0,20).length; i++) {
-        //   if (resultados[i].splice(0,20).filter(element => element === salida)) {
-        //     console.log(resultados[i])
-        //   }
-        // }        
+        // console.log('identificador salida ', salida[0])
+        // console.log('id destino', destino)
+        let result = []
+        result.push(resultados.slice(0,20))
+        // console.log('array inicial', result)
+        let prueba = []
+        prueba = result.map(x => x.filter(element => element === salida[0]))
+        // result.forEach(element => {
+
+        //   // element.forEach(x => {
+        //   //   // result = x.filter(y => y === salida[0])
+        //   //   // console.log(x)
+        //   //   for (var i = 0; i < x.length; i++) {
+        //   //     console.log('prueba', x[i])
+        //   //   }
+        //   // })
+        //   // result = element[0].filter(x => x === salida[0])
+        // })
+        console.log('array', prueba)
+
+        // console.log('resultados: ' , resultados.slice(0,20).find(element => element === salida[0]))
+        // for (var i = 0; i < resultados.slice(0,20).length; i++) {
+        //   console.log(resultados[i].slice(0,20).filter(element => element === 1))
+        // }
       }
     }
     if (seconds_one === 900 && seconds_two === 1800) {  
