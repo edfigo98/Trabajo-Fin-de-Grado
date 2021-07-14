@@ -1,131 +1,132 @@
-let _ = require('underscore')
 const xlsxFile = require('read-excel-file/node')
-// const xlsx = require('xlsx')
 let WebSocketServer = require('ws').Server
-const WebSocket = require('ws')
+// const WebSocket = require('ws')
 let wss = new WebSocketServer({port: 8181})
 let uuid = require('uuid')
+const fichero_1 = './preprocesado 6-7.xlsx'
+const fichero_2 = './preprocesado 7-8.xlsx'
+const fichero_3 = './preprocesado 8-9.xlsx'
+let datos = []
+let array_datos = []
+let resultados = []
+let promedio = []
 
 function initialize () {
   clients = []
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-function leerExcel6_7(id_salida, id_destino, hora) {
+function obtenerParametros (id_origen, id_destino, hora) {
   var interval = hora.split(':')
-  let salida, destino, minute_one, seconds_one, minute_two, seconds_two
-  let datos = []
-  salida = id_salida.match(/(\d+)/)
+  let origen, destino, minute_one, inicio, minute_two, fin
+  origen = id_origen.match(/(\d+)/)
   destino = id_destino.match(/(\d+)/)
-  console.log(salida[0])
+  console.log(origen[0])
   console.log(destino[0])
-
+  
   if(interval.length === 3) {
     minute_one = parseInt(interval[1], 10);
     minute_two = parseInt(interval[2], 10);
     if (interval[2] == '00') {
-      seconds_one = minute_one * 60
-      seconds_two = 3600
+      inicio = minute_one * 60
+      fin = 3600
     } else {
-      seconds_one = minute_one * 60
-      seconds_two = minute_two * 60
+      inicio = minute_one * 60
+      fin = minute_two * 60
     }
-    console.log('segundos minimo intervalo 6-7:', seconds_one)
-    console.log('segundos maximo intervalo 6-7', seconds_two)
+    console.log('inicio intervalo 6-7:', inicio)
+    console.log('fin maximo intervalo 6-7', fin)
   }
-  
-  let resultados = []
-  xlsxFile('./preprocesado 6-7.xlsx', { sheet: 'Matrices 15 minutos' }).then((rows) => {
+  if (hora >= '6:00' && hora < '7:00') {
+    procesarDatosExcel(fichero_1, origen[0], destino, inicio, fin)
+  } 
+  if (hora >= '7:00' && hora < '8:00') {
+    procesarDatosExcel(fichero_2, origen[0], destino, inicio, fin)
+  } 
+  if (hora >= '8:00' && hora < '9:00') {
+    procesarDatosExcel(fichero_3, origen[0], destino, inicio, fin)
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+function procesarDatosExcel (fichero, origen, destino, inicio, fin) {
+  xlsxFile(fichero, { sheet: 'Matrices 15 minutos' }).then((rows) => {
+    console.log('fichero de entrada', fichero)
+    array_datos = []
     for (i in rows) {
       datos = (rows[i].filter(x => x !== null))
-      resultados.push(datos)
+      array_datos.push(datos)
     }
-    if (seconds_one === 0 && seconds_two === 900) {
+    if (inicio === 0 && fin === 900) {
       if (destino.includes('96')) {
-        // console.log('identificador salida ', salida[0])
-        // console.log('id destino', destino)
-        let result = []
-        result.push(resultados.slice(0,20))
-        // console.log('array inicial', result)
-        let prueba = []
-        prueba = result.map(x => x.filter(element => element === salida[0]))
-        // result.forEach(element => {
-
-        //   // element.forEach(x => {
-        //   //   // result = x.filter(y => y === salida[0])
-        //   //   // console.log(x)
-        //   //   for (var i = 0; i < x.length; i++) {
-        //   //     console.log('prueba', x[i])
-        //   //   }
-        //   // })
-        //   // result = element[0].filter(x => x === salida[0])
-        // })
-        console.log('array', prueba)
-
-        // console.log('resultados: ' , resultados.slice(0,20).find(element => element === salida[0]))
-        // for (var i = 0; i < resultados.slice(0,20).length; i++) {
-        //   console.log(resultados[i].slice(0,20).filter(element => element === 1))
-        // }
+        resultados = array_datos.slice(0,20)
+      }
+      if (destino.includes('108')) {
+        resultados = array_datos.slice(20,38)
+      }
+      if (destino.includes('113')) {
+        resultados = array_datos.slice(38,56)
+      }
+      if (destino.includes('120')) {
+        resultados = array_datos.slice(56,78)
       }
     }
-    if (seconds_one === 900 && seconds_two === 1800) {  
-      console.log(resultados.slice(78, 156))
+    if (inicio === 900 && fin === 1800) {  
+      if (destino.includes('96')) {
+        resultados = array_datos.slice(78, 98)
+      }
+      if (destino.includes('108')) {
+        resultados = array_datos.slice(98, 116)
+      }
+      if (destino.includes('113')) {
+        resultados = array_datos.slice(116, 135)
+      }
+      if (destino.includes('120')) {
+        resultados = array_datos.slice(135, 156)
+      }
     }
-    if (seconds_one === 1800 && seconds_two === 2700) {  
-      console.log(resultados.slice(156, 234))
+    if (inicio === 1800 && fin === 2700) {  
+      if (destino.includes('96')) {
+        resultados = array_datos.slice(156, 176)
+      }
+      if (destino.includes('108')) {
+        resultados = array_datos.slice(176, 194)
+      }
+      if (destino.includes('113')) {
+        resultados = array_datos.slice(194, 213)
+      }
+      if (destino.includes('120')) {
+        resultados = array_datos.slice(213, 234)
+      }
     }
-    if (seconds_one === 2700 && seconds_two === 3600) {  
-      console.log(resultados.slice(234, 320))
+    if (inicio === 2700 && fin === 3600) {  
+      if (destino.includes('96')) {
+        resultados = array_datos.slice(234, 254)
+      }
+      if (destino.includes('108')) {
+        resultados = array_datos.slice(254, 272)
+      }
+      if (destino.includes('113')) {
+        resultados = array_datos.slice(272, 291)
+      }
+      if (destino.includes('120')) {
+        resultados = array_datos.slice(291, 310)
+      }
     }
+    console.log('array inicial', resultados)
+    promedio = resultados.map(x => x).filter(x => x[0] == origen)
+    console.log('datos punto origen: ', promedio)
+    calcularIntervalo(promedio[0][2])
+    // console.log('valor promedio en minutos: ', promedio[0][2])
+    return array_datos
   })
 }
 
-function leerExcel7_8(id_salida, id_destino, hora) {
-  var interval = hora.split(':')
-  let salida, destino, minute_one, seconds_one, minute_two, seconds_two
-  salida = id_salida.match(/(\d+)/)
-  destino = id_destino.match(/(\d+)/)
-  console.log(salida[0])
-  console.log(destino[0])
-
-  if(interval.length === 3) {
-    minute_one = parseInt(interval[1], 10);
-    minute_two = parseInt(interval[2], 10);
-    if (interval[2] == '00') {      
-      seconds_one = minute_one * 60
-      seconds_two = 3600
-    } else {
-      seconds_one = minute_one * 60
-      seconds_two = minute_two * 60
-    }
-    console.log('segundos minimo intervalo 7-8:', seconds_one)
-    console.log('segundos maximo intervalo 7-8', seconds_two)
-  }
+function calcularIntervalo (valor_promedio) {
+  console.log('valor promedio', valor_promedio)
 }
 
-function leerExcel8_9(id_salida, id_destino, hora) {
-  var interval = hora.split(':')
-  let salida, destino, minute_one, seconds_one, minute_two, seconds_two
-  salida = id_salida.match(/(\d+)/)
-  destino = id_destino.match(/(\d+)/)
-  console.log(salida[0])
-  console.log(destino[0])
-
-  if(interval.length === 3) {
-    minute_one = parseInt(interval[1], 10);
-    minute_two = parseInt(interval[2], 10);
-    if (interval[2] == '00') {      
-      seconds_one = minute_one * 60
-      seconds_two = 3600
-    } else {
-      seconds_one = minute_one * 60
-      seconds_two = minute_two * 60
-    }
-    console.log('segundos minimo intervalo 8-9:', seconds_one)
-    console.log('segundos maximo intervalo 8-9', seconds_two)
-  }
-}
+/////////////////////////////////////////////////////////////////////
 
 wss.on('connection', function (websocket) {
   websocket.on('close', function (websocket) {
@@ -139,7 +140,7 @@ wss.on('connection', function (websocket) {
   clients.push(client)
   console.log('# New client [%s] connected', client_uuid)
   
-  websocket.on('message', function incoming(message) {
+  websocket.on('message', function incoming (message) {
     // console.log(message)
     data = JSON.parse(message)
     id_salida = data.salida
@@ -148,13 +149,7 @@ wss.on('connection', function (websocket) {
     console.log('id salida:', id_salida)
     console.log('id destino:', id_destino)
     console.log('hora:', hora)
-    if (hora >= '6:00' && hora < '7:00') {
-      leerExcel6_7(id_salida, id_destino, hora)
-    } else if (hora >= '7:00' && hora < '8:00') {
-      leerExcel7_8(id_salida, id_destino, hora)
-    } else if (hora >= '8:00' && hora < '9:00') {
-      leerExcel8_9(id_salida, id_destino, hora)
-    }
+    obtenerParametros(id_salida, id_destino, hora)
   })
 });
 
