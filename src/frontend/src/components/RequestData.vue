@@ -4,7 +4,7 @@
       elevation="5"
       @click="requestData()"
     >
-      Calcular tiempo
+      Calcular intervalo de salida
     </v-btn>
     <v-row>
       <v-col
@@ -26,10 +26,36 @@
         <v-select
           v-model="hora"
           :items="horas"
-          label="Hora de llegada prevista"
+          label="Intervalo previsto de llegada"
         />
       </v-col>
     </v-row>
+    <v-simple-table>
+      <template v-slot:default>
+        <thead>
+          <tr>
+            <th class="text-left">
+              Origen
+            </th>
+            <th class="text-left">
+              Destino
+            </th>
+            <th class="text-left">
+              Intervalo de salida
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="item in desserts"
+            :key="item.name"
+          >
+            <td>{{ item.name }}</td>
+            <td>{{ item.calories }}</td>
+          </tr>
+        </tbody>
+      </template>
+    </v-simple-table>
   </div>
 </template>
 
@@ -58,7 +84,7 @@
           connection.send(`{ "salida": "${this.salida}", "destino": "${this.destino}", "hora": "${this.hora}" }`)          
           // alert('Obteniendo datos desde...')
           connection.onmessage = async (event) => {
-            console.log(event.data)
+            alert(event.data)
             // const dat = JSON.parse(event.data)
           }
         }
