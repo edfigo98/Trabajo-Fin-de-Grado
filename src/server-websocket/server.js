@@ -11,11 +11,15 @@ let array_datos = []
 let resultados = []
 let promedio = []
 
+////////////////////////////////////////////////////////////////////////////////
+
 function initialize () {
   clients = []
 }
 
-function obtenerParametros (id_origen, id_destino, hora) {
+////////////////////////////////////////////////////////////////////////////////
+
+function obtenerParametros (id_origen, id_destino, hora, cliente) {
   var interval = hora.split(':')
   let origen, destino, minute_one, inicio, minute_two, fin
   origen = id_origen.match(/(\d+)/)
@@ -37,19 +41,19 @@ function obtenerParametros (id_origen, id_destino, hora) {
     console.log('fin maximo intervalo 6-7', fin)
   }
   if (hora >= '6:00' && hora < '7:00') {
-    procesarDatosExcel(fichero_1, origen[0], destino, inicio, fin)
+    procesarDatosExcel(fichero_1, origen[0], destino, inicio, fin, cliente)
   } 
   if (hora >= '7:00' && hora < '8:00') {
-    procesarDatosExcel(fichero_2, origen[0], destino, inicio, fin)
+    procesarDatosExcel(fichero_2, origen[0], destino, inicio, fin, cliente)
   } 
   if (hora >= '8:00' && hora < '9:00') {
-    procesarDatosExcel(fichero_3, origen[0], destino, inicio, fin)
+    procesarDatosExcel(fichero_3, origen[0], destino, inicio, fin, cliente)
   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-function procesarDatosExcel (fichero, origen, destino, inicio, fin) {
+function procesarDatosExcel (fichero, origen, destino, inicio, fin, cliente) {
   xlsxFile(fichero, { sheet: 'Matrices 15 minutos' }).then((rows) => {
     console.log('fichero de entrada', fichero)
     array_datos = []
@@ -116,17 +120,29 @@ function procesarDatosExcel (fichero, origen, destino, inicio, fin) {
     console.log('array inicial', resultados)
     promedio = resultados.map(x => x).filter(x => x[0] == origen)
     console.log('datos punto origen: ', promedio)
-    calcularIntervalo(promedio[0][2])
+    calcularIntervalo(promedio[0][2], inicio, fin, cliente)
     // console.log('valor promedio en minutos: ', promedio[0][2])
     return array_datos
   })
 }
 
-function calcularIntervalo (valor_promedio) {
+////////////////////////////////////////////////////////////////////////////////
+
+function calcularIntervalo (valor_promedio, valor_inicial, valor_final, cliente) {
   console.log('valor promedio', valor_promedio)
+  console.log('valor inicial: ', valor_inicial)
+  console.log('valor final: ', valor_final)
+  let valor = valor_promedio * 60
+  valor = valor_final - valor
+  console.log('valor', valor)
+  if (valor < valor_inicial) {
+    cliente.ws.send('Debe salir en el intervalo anterior')
+  } else {
+    cliente.ws.send('Debe salir en el mismo intervalo')
+  }
 }
 
-/////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 wss.on('connection', function (websocket) {
   websocket.on('close', function (websocket) {
@@ -149,7 +165,7 @@ wss.on('connection', function (websocket) {
     console.log('id salida:', id_salida)
     console.log('id destino:', id_destino)
     console.log('hora:', hora)
-    obtenerParametros(id_salida, id_destino, hora)
+    obtenerParametros(id_salida, id_destino, hora, client)
   })
 });
 
