@@ -10,6 +10,8 @@ let datos = []
 let array_datos = []
 let resultados = []
 let promedio = []
+let horas = ['6:00 - 6:15', '6:15 - 6:30', '6:30 - 6:45', '6:45 - 7:00', '7:00 - 7:15', '7:15 - 7:30', '7:30 - 7:45', '7:45 - 8:00', '8:00 - 8:15', '8:15 - 8:30', '8:30 - 8:45', '8:45 - 9:00',]
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -41,19 +43,19 @@ function obtenerParametros (id_origen, id_destino, hora, cliente) {
     console.log('fin maximo intervalo 6-7', fin)
   }
   if (hora >= '6:00' && hora < '7:00') {
-    procesarDatosExcel(fichero_1, origen[0], destino, inicio, fin, cliente)
+    procesarDatosExcel(fichero_1, origen[0], destino, hora, inicio, fin, cliente)
   } 
   if (hora >= '7:00' && hora < '8:00') {
-    procesarDatosExcel(fichero_2, origen[0], destino, inicio, fin, cliente)
+    procesarDatosExcel(fichero_2, origen[0], destino, hora, inicio, fin, cliente)
   } 
   if (hora >= '8:00' && hora < '9:00') {
-    procesarDatosExcel(fichero_3, origen[0], destino, inicio, fin, cliente)
+    procesarDatosExcel(fichero_3, origen[0], destino, hora, inicio, fin, cliente)
   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-function procesarDatosExcel (fichero, origen, destino, inicio, fin, cliente) {
+function procesarDatosExcel (fichero, origen, destino, hora, inicio, fin, cliente) {
   xlsxFile(fichero, { sheet: 'Matrices 15 minutos' }).then((rows) => {
     console.log('fichero de entrada', fichero)
     array_datos = []
@@ -120,25 +122,38 @@ function procesarDatosExcel (fichero, origen, destino, inicio, fin, cliente) {
     console.log('array inicial', resultados)
     promedio = resultados.map(x => x).filter(x => x[0] == origen)
     console.log('datos punto origen: ', promedio)
-    calcularIntervalo(promedio[0][2], inicio, fin, cliente)
-    // console.log('valor promedio en minutos: ', promedio[0][2])
+    calcularIntervalo(promedio[0][2], hora, inicio, fin, cliente)
     return array_datos
   })
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-function calcularIntervalo (valor_promedio, valor_inicial, valor_final, cliente) {
+function calcularIntervalo (valor_promedio, hora, valor_inicial, valor_final, cliente) {
   console.log('valor promedio', valor_promedio)
   console.log('valor inicial: ', valor_inicial)
   console.log('valor final: ', valor_final)
   let valor = valor_promedio * 60
   valor = valor_final - valor
   console.log('valor', valor)
+  console.log('horass', horas)
+  // let encontrado
+  // for (i = 0; i < horas.length; i++) {
+  //   if (horas[i] === hora) {
+  //     encontrado === true
+  //   }
+  //   if (encontrado) {
+  //     console.log(hora[i])
+  //   }
+  // }
+  // const found = horas.find(element => element === hora)
+  // console.log(found)
+  const intervalo = horas.filter(element => element < hora)
+  console.log(intervalo)
   if (valor < valor_inicial) {
-    cliente.ws.send('Debe salir en el intervalo anterior')
+    cliente.ws.send('Debe salir entre: ' + intervalo[intervalo.length - 1])
   } else {
-    cliente.ws.send('Debe salir en el mismo intervalo')
+    cliente.ws.send('Debe salir entre: ' + hora)
   }
 }
 
