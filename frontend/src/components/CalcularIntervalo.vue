@@ -43,6 +43,9 @@
             <th class="text-left">
               Hora de salida
             </th>
+            <th class="text-left">
+              Hora de llegada prevista
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -52,7 +55,8 @@
           >
             <td>{{ item.salida }}</td>
             <td>{{ item.destino }}</td>
-            <td>{{ item.hora }}</td>
+            <td>{{ item.hora_salida }}</td>
+            <td>{{ item.hora_llegada}}</td>
           </tr>
         </tbody>
       </template>
@@ -91,7 +95,8 @@
             var jsonObject = {
               "salida": this.salida,
               "destino": this.destino,
-              "hora": event.data
+              "hora_salida": event.data,
+              "hora_llegada": this.hora
             }
             this.intervalo.push(jsonObject)
             console.log(this.intervalo)
