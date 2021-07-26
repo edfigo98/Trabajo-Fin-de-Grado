@@ -17,8 +17,6 @@
     </v-navigation-drawer>
 
     <v-main>
-      <!--  -->
-      <!-- <connect name="connect" /> -->
       <request name="request" />
     </v-main>
   </v-app>
@@ -26,13 +24,11 @@
 
 
 <script>
-  // import ConnectServe from './components/ConnectServe.vue'
-  import RequestData from './components/RequestData.vue'
+  import CalcularIntervalo from './components/CalcularIntervalo.vue'
   export default {
     name: 'App',
     components: {
-      // connect: ConnectServe,
-      request: RequestData,
+      request: CalcularIntervalo,
     },
     data: () => ({ 
       drawer: null 
