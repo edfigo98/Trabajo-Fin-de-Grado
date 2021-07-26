@@ -1,6 +1,5 @@
 const xlsxFile = require('read-excel-file/node')
 let WebSocketServer = require('ws').Server
-// const WebSocket = require('ws')
 let wss = new WebSocketServer({port: 8181})
 let uuid = require('uuid')
 const fichero_1 = './preprocesado 6-7.xlsx'
@@ -26,8 +25,6 @@ function obtenerParametros (id_origen, id_destino, hora, cliente) {
   let origen, destino, minute_one, inicio, minute_two, fin
   origen = id_origen.match(/(\d+)/)
   destino = id_destino.match(/(\d+)/)
-  console.log(origen[0])
-  console.log(destino[0])
   
   if(interval.length === 3) {
     minute_one = parseInt(interval[1], 10);
@@ -57,7 +54,6 @@ function obtenerParametros (id_origen, id_destino, hora, cliente) {
 
 function procesarDatosExcel (fichero, origen, destino, hora, inicio, fin, cliente) {
   xlsxFile(fichero, { sheet: 'Matrices 15 minutos' }).then((rows) => {
-    console.log('fichero de entrada', fichero)
     array_datos = []
     for (i in rows) {
       datos = (rows[i].filter(x => x !== null))
@@ -137,12 +133,13 @@ function calcularIntervalo (valor_promedio, hora, valor_inicial, valor_final, cl
   valor = valor_final - valor
   console.log('valor', valor)
   console.log('horass', horas)
-  // const found = horas.find(element => element === hora)
-  // console.log(found)
+
   const intervalo = horas.filter(element => element < hora)
-  console.log(intervalo)
-  if (valor < valor_inicial) {
+  console.log('intervalo: ', intervalo)
+  if (valor < valor_inicial && hora !== '6:00 - 6:15') {
     cliente.ws.send('Debe salir entre: ' + intervalo[intervalo.length - 1])
+  } else if (valor < valor_inicial && hora === '6:00 - 6:15') {
+    cliente.ws.send('Debe salir antes de las 6:00')
   } else {
     cliente.ws.send('Debe salir entre: ' + hora)
   }
@@ -163,7 +160,6 @@ wss.on('connection', function (websocket) {
   console.log('# New client [%s] connected', client_uuid)
   
   websocket.on('message', function incoming (message) {
-    // console.log(message)
     data = JSON.parse(message)
     id_salida = data.salida
     id_destino = data.destino
