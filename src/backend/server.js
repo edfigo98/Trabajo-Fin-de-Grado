@@ -137,15 +137,6 @@ function calcularIntervalo (valor_promedio, hora, valor_inicial, valor_final, cl
   valor = valor_final - valor
   console.log('valor', valor)
   console.log('horass', horas)
-  // let encontrado
-  // for (i = 0; i < horas.length; i++) {
-  //   if (horas[i] === hora) {
-  //     encontrado === true
-  //   }
-  //   if (encontrado) {
-  //     console.log(hora[i])
-  //   }
-  // }
   // const found = horas.find(element => element === hora)
   // console.log(found)
   const intervalo = horas.filter(element => element < hora)
