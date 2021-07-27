@@ -51,7 +51,7 @@
         <tbody>
           <tr
             v-for="item in intervalo"
-            :key="item"
+            :key="item.salida"
           >
             <td>{{ item.salida }}</td>
             <td>{{ item.destino }}</td>
@@ -99,7 +99,6 @@
               "hora_llegada": this.hora
             }
             this.intervalo.push(jsonObject)
-            console.log(this.intervalo)
           }
         }
       },
