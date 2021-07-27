@@ -11,14 +11,13 @@ let resultados = []
 let promedio = []
 let horas = ['6:00 - 6:15', '6:15 - 6:30', '6:30 - 6:45', '6:45 - 7:00', '7:00 - 7:15', '7:15 - 7:30', '7:30 - 7:45', '7:45 - 8:00', '8:00 - 8:15', '8:15 - 8:30', '8:30 - 8:45', '8:45 - 9:00',]
 
-
-////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
 
 function initialize () {
   clients = []
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
 
 function obtenerParametros (id_origen, id_destino, hora, cliente) {
   var interval = hora.split(':')
@@ -36,8 +35,6 @@ function obtenerParametros (id_origen, id_destino, hora, cliente) {
       inicio = minute_one * 60
       fin = minute_two * 60
     }
-    console.log('inicio intervalo 6-7:', inicio)
-    console.log('fin maximo intervalo 6-7', fin)
   }
   if (hora >= '6:00' && hora < '7:00') {
     procesarDatosExcel(fichero_1, origen[0], destino, hora, inicio, fin, cliente)
@@ -50,11 +47,10 @@ function obtenerParametros (id_origen, id_destino, hora, cliente) {
   }
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
 
 function procesarDatosExcel (fichero, origen, destino, hora, inicio, fin, cliente) {
   xlsxFile(fichero, { sheet: 'Matrices 15 minutos' }).then((rows) => {
-    array_datos = []
     for (i in rows) {
       datos = (rows[i].filter(x => x !== null))
       array_datos.push(datos)
@@ -123,29 +119,40 @@ function procesarDatosExcel (fichero, origen, destino, hora, inicio, fin, client
   })
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
 
 function calcularIntervalo (valor_promedio, hora, valor_inicial, valor_final, cliente) {
-  console.log('valor promedio', valor_promedio)
-  console.log('valor inicial: ', valor_inicial)
-  console.log('valor final: ', valor_final)
   let valor = valor_promedio * 60
+  console.log('valor promedio en minutos', valor_promedio)
   valor = valor_final - valor
-  console.log('valor', valor)
-  console.log('horass', horas)
+  console.log('incio en segundos', valor_inicial)
+  console.log('valor promedio en segundos', valor)
+  console.log('fin en segundos', valor_final)
+  let intervalo = horas.filter(element => element < hora)
+  let contador = 0
+  let intervalo_salida = []
 
-  const intervalo = horas.filter(element => element < hora)
-  console.log('intervalo: ', intervalo)
-  if (valor < valor_inicial && hora !== '6:00 - 6:15') {
-    cliente.ws.send('Debe salir entre: ' + intervalo[intervalo.length - 1])
-  } else if (valor < valor_inicial && hora === '6:00 - 6:15') {
+  if (valor < valor_inicial && hora === '6:00 - 6:15') {
     cliente.ws.send('Debe salir antes de las 6:00')
   } else {
-    cliente.ws.send('Debe salir entre: ' + hora)
+    if (valor < valor_inicial) {
+      while (valor < valor_inicial) {
+        valor_inicial -= 900
+        contador++
+        intervalo_salida = intervalo[intervalo.length - contador]
+        console.log('contador', contador)
+        console.log('interv', intervalo_salida)
+        console.log('valor_inicial', valor_inicial)
+        console.log('valor', valor)
+      }
+      cliente.ws.send('Debe salir entre: ' + intervalo_salida)  
+    } else {
+      cliente.ws.send('Debe salir entre: ' + hora)
+    }
   }
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
 
 wss.on('connection', function (websocket) {
   websocket.on('close', function (websocket) {
