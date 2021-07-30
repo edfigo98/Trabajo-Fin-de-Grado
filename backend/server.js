@@ -5,11 +5,13 @@ let uuid = require('uuid')
 const fichero_1 = './preprocesado 6-7.xlsx'
 const fichero_2 = './preprocesado 7-8.xlsx'
 const fichero_3 = './preprocesado 8-9.xlsx'
+const expect = require('expect');
 let datos = []
 let array_datos = []
 let resultados = []
 let promedio = []
 let horas = ['6:00 - 6:15', '6:15 - 6:30', '6:30 - 6:45', '6:45 - 7:00', '7:00 - 7:15', '7:15 - 7:30', '7:30 - 7:45', '7:45 - 8:00', '8:00 - 8:15', '8:15 - 8:30', '8:30 - 8:45', '8:45 - 9:00',]
+let hora, origen, destino, minute_one, inicio, minute_two, fin, val_promedio
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -21,7 +23,6 @@ function initialize () {
 
 function obtenerParametros (id_origen, id_destino, hora, cliente) {
   var interval = hora.split(':')
-  let origen, destino, minute_one, inicio, minute_two, fin
   origen = id_origen.match(/(\d+)/)
   destino = id_destino.match(/(\d+)/)
   
@@ -124,9 +125,10 @@ function procesarDatosExcel (fichero, origen, destino, hora, inicio, fin, client
 function calcularIntervalo (valor_promedio, hora, valor_inicial, valor_final, cliente) {
   let valor = valor_promedio * 60
   console.log('valor promedio en minutos', valor_promedio)
-  valor = valor_final - valor
-  console.log('incio en segundos', valor_inicial)
   console.log('valor promedio en segundos', valor)
+  valor = valor_final - valor
+  console.log('inicio en segundos', valor_inicial)
+  console.log('valor final - valor promedio (segundos)', valor)
   console.log('fin en segundos', valor_final)
   let intervalo = horas.filter(element => element < hora)
   let contador = 0
@@ -145,7 +147,7 @@ function calcularIntervalo (valor_promedio, hora, valor_inicial, valor_final, cl
         console.log('valor_inicial', valor_inicial)
         console.log('valor', valor)
       }
-      cliente.ws.send('Debe salir entre: ' + intervalo_salida)  
+      cliente.ws.send('Debe salir entre: ' + intervalo_salida)
     } else {
       cliente.ws.send('Debe salir entre: ' + hora)
     }
@@ -154,18 +156,74 @@ function calcularIntervalo (valor_promedio, hora, valor_inicial, valor_final, cl
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
+// PRUEBAS UNITARIAS
+
+module.exports.departureInterval = function () {
+  it('should return a departure interval', done => {
+    expect(calcularIntervaloPrueba(30.1, '6:30 - 6:45', 900, 1800)).toEqual('6:00 - 6:15')
+    done();
+  })
+  it('Los Realejos -> Camino La Hornera - Santa Cruz de Tenerife, Hora prevista de llegada: 7:30 - 7:45', done => {
+    expect(calcularIntervaloPrueba(37.23452381, '7:30 - 7:45', 900, 1800)).toEqual('7:00 - 7:15')
+    done();
+  })
+  it('La Cuesta de la Villa -> Guajara, Hora prevista de llegada: 8:00 - 8:15', done => {
+    expect(calcularIntervaloPrueba(14.01715686, '8:00 - 8:15', 0, 900)).toEqual('8:00 - 8:15')
+    done();
+  })
+  it('should return a departure interval', done => {
+    expect(calcularIntervaloPrueba(30.1, '6:30 - 6:45', 900, 1800)).toEqual('6:00 - 6:15')
+    done();
+  })
+  it('should return a departure interval', done => {
+    expect(calcularIntervaloPrueba(30.1, '6:30 - 6:45', 900, 1800)).toEqual('6:00 - 6:15')
+    done();
+  })
+  it('should return a departure interval', done => {
+    expect(calcularIntervaloPrueba(30.1, '6:30 - 6:45', 900, 1800)).toEqual('6:00 - 6:15')
+    done();
+  })
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+// MÉTODO PARA PRUEBAS UNITARIAS
+
+function calcularIntervaloPrueba (valor_promedio, hora, valor_inicial, valor_final) {
+  let valor = valor_promedio * 60
+  valor = valor_final - valor
+  let intervalo = horas.filter(element => element < hora)
+  let contador = 0
+  let intervalo_salida = []
+  let resultado
+
+  if (valor < valor_inicial && hora === '6:00 - 6:15') {
+    resultado = 'Debe salir antes de las 6:00'
+  } else {
+    if (valor < valor_inicial) {
+      while (valor < valor_inicial) {
+        valor_inicial -= 900
+        contador++
+        intervalo_salida = intervalo[intervalo.length - contador]
+      }
+      resultado = intervalo_salida
+    } else {
+      resultado = hora
+    }
+  }
+  return resultado
+}
+
 wss.on('connection', function (websocket) {
   websocket.on('close', function (websocket) {
     console.log("Client Disconnected!")
   })
   let id_salida
   let id_destino
-  let hora
   var client_uuid = uuid.v4()
   var client = {'id': client_uuid, 'ws': websocket}
   clients.push(client)
   console.log('# New client [%s] connected', client_uuid)
-  
   websocket.on('message', function incoming (message) {
     data = JSON.parse(message)
     id_salida = data.salida
