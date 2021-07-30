@@ -4,23 +4,27 @@
   "description": "Server that provides events with updates of agents through WebSockets",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "mocha ./test/*.test.js --exit"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/KaizTen/kaizten-simulation-viewer"
+    "url": "https://github.com/edfigo98/Trabajo-Fin-de-Grado.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "eslint": "^7.22.0",
+    "expect": "^27.0.6",
     "pg": "^8.5.1",
     "read-excel-file": "^5.1.0",
     "underscore": "^1.12.1",
     "uuid": "^8.3.2",
     "ws": "^7.4.4",
     "xlsx": "^0.17.0"
+  },
+  "devDependencies": {
+    "mocha": "^9.0.3"
   }
 }
