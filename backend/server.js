@@ -1,17 +1,16 @@
 const xlsxFile = require('read-excel-file/node')
+const expect = require('expect');
 let WebSocketServer = require('ws').Server
 let wss = new WebSocketServer({port: 8181})
 let uuid = require('uuid')
-const fichero_1 = './data/preprocesado 6-7.xlsx'
-const fichero_2 = './data/preprocesado 7-8.xlsx'
-const fichero_3 = './data/preprocesado 8-9.xlsx'
-const expect = require('expect');
+const excel_6_7 = './data/preprocesado 6-7.xlsx'
+const excel_7_8 = './data/preprocesado 7-8.xlsx'
+const excel_8_9 = './data/preprocesado 8-9.xlsx'
 let datos = []
 let array_datos = []
 let resultados = []
 let promedio = []
 let horas = ['5:00 - 5:15', '5:15 - 5:30', '5:30 - 5:45', '5:45 - 6:00', '6:00 - 6:15', '6:15 - 6:30', '6:30 - 6:45', '6:45 - 7:00', '7:00 - 7:15', '7:15 - 7:30', '7:30 - 7:45', '7:45 - 8:00', '8:00 - 8:15', '8:15 - 8:30', '8:30 - 8:45', '8:45 - 9:00',]
-let hora, origen, destino, minute_one, inicio, minute_two, fin, val_promedio
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -25,33 +24,34 @@ function obtenerParametros (id_origen, id_destino, hora, cliente) {
   var interval = hora.split(':')
   origen = id_origen.match(/(\d+)/)
   destino = id_destino.match(/(\d+)/)
-  
+
   if(interval.length === 3) {
-    minute_one = parseInt(interval[1], 10);
-    minute_two = parseInt(interval[2], 10);
+    let num_min_1 = parseInt(interval[1], 10);
+    let num_min_2 = parseInt(interval[2], 10);
     if (interval[2] == '00') {
-      inicio = minute_one * 60
+      inicio = num_min_1 * 60
       fin = 3600
     } else {
-      inicio = minute_one * 60
-      fin = minute_two * 60
+      inicio = num_min_1 * 60
+      fin = num_min_2 * 60
     }
   }
+
   if (hora >= '6:00' && hora < '7:00') {
-    procesarDatosExcel(fichero_1, origen[0], destino, hora, inicio, fin, cliente)
+    procesarDatosExcel(excel_6_7, origen[0], destino, hora, inicio, fin, cliente)
   } 
   if (hora >= '7:00' && hora < '8:00') {
-    procesarDatosExcel(fichero_2, origen[0], destino, hora, inicio, fin, cliente)
+    procesarDatosExcel(excel_7_8, origen[0], destino, hora, inicio, fin, cliente)
   } 
   if (hora >= '8:00' && hora < '9:00') {
-    procesarDatosExcel(fichero_3, origen[0], destino, hora, inicio, fin, cliente)
+    procesarDatosExcel(excel_8_9, origen[0], destino, hora, inicio, fin, cliente)
   }
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-function procesarDatosExcel (fichero, origen, destino, hora, inicio, fin, cliente) {
-  xlsxFile(fichero, { sheet: 'Matrices 15 minutos' }).then((rows) => {
+function procesarDatosExcel (excel, origen, destino, hora, inicio, fin, cliente) {
+  xlsxFile(excel, { sheet: 'Matrices 15 minutos' }).then((rows) => {
     for (i in rows) {
       datos = (rows[i].filter(x => x !== null))
       array_datos.push(datos)
@@ -112,9 +112,7 @@ function procesarDatosExcel (fichero, origen, destino, hora, inicio, fin, client
         resultados = array_datos.slice(291, 310)
       }
     }
-    console.log('array inicial', resultados)
     promedio = resultados.map(x => x).filter(x => x[0] == origen)
-    console.log('datos punto origen: ', promedio)
     calcularIntervalo(promedio[0][2], hora, inicio, fin, cliente)
     return array_datos
   })
@@ -122,27 +120,27 @@ function procesarDatosExcel (fichero, origen, destino, hora, inicio, fin, client
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-function calcularIntervalo (valor_promedio, hora, valor_inicial, valor_final, cliente) {
-  let valor = valor_promedio * 60
-  console.log('valor promedio en minutos', valor_promedio)
-  console.log('valor promedio en segundos', valor)
-  valor = valor_final - valor
-  console.log('inicio en segundos', valor_inicial)
-  console.log('valor final - valor promedio (segundos)', valor)
-  console.log('fin en segundos', valor_final)
+function calcularIntervalo (promedio, hora, inicio, fin, cliente) {
+  let valor = promedio * 60
+  // console.log('valor promedio en minutos', promedio)
+  // console.log('valor promedio en segundos', valor)
+  valor = fin - valor
+  // console.log('inicio en segundos', inicio)
+  // console.log('valor final - valor promedio (segundos)', valor)
+  // console.log('fin en segundos', fin)
   let intervalo = horas.filter(element => element < hora)
   let contador = 0
   let intervalo_salida = []
 
-  if (valor < valor_inicial) {
-    while (valor < valor_inicial) {
-      valor_inicial -= 900
+  if (valor < inicio) {
+    while (valor < inicio) {
+      inicio -= 900
       contador++
       intervalo_salida = intervalo[intervalo.length - contador]
-      console.log('contador', contador)
-      console.log('interv', intervalo_salida)
-      console.log('valor_inicial', valor_inicial)
-      console.log('valor', valor)
+      // console.log('contador', contador)
+      // console.log('interv', intervalo_salida)
+      // console.log('inicio', inicio)
+      // console.log('valor', valor)
     }
     cliente.ws.send('Debe salir entre: ' + intervalo_salida)
   } else {
@@ -185,17 +183,17 @@ module.exports.departureInterval = function () {
 
 // MÉTODO PARA PRUEBAS UNITARIAS
 
-function calcularIntervaloPrueba (valor_promedio, hora, valor_inicial, valor_final) {
-  let valor = valor_promedio * 60
-  valor = valor_final - valor
+function calcularIntervaloPrueba (promedio, hora, inicio, fin) {
+  let valor = promedio * 60
+  valor = fin - valor
   let intervalo = horas.filter(element => element < hora)
   let contador = 0
   let intervalo_salida = []
   let resultado
 
-  if (valor < valor_inicial) {
-    while (valor < valor_inicial) {
-      valor_inicial -= 900
+  if (valor < inicio) {
+    while (valor < inicio) {
+      inicio -= 900
       contador++
       intervalo_salida = intervalo[intervalo.length - contador]
     }
@@ -212,8 +210,7 @@ wss.on('connection', function (websocket) {
   websocket.on('close', function (websocket) {
     console.log("Client Disconnected!")
   })
-  let id_salida
-  let id_destino
+  let id_salida, id_destino
   var client_uuid = uuid.v4()
   var client = {'id': client_uuid, 'ws': websocket}
   clients.push(client)
