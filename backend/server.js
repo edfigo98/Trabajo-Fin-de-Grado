@@ -155,28 +155,28 @@ function calcularIntervalo (valor_promedio, hora, valor_inicial, valor_final, cl
 // PRUEBAS UNITARIAS
 
 module.exports.departureInterval = function () {
-  it('should return a departure interval', done => {
-    expect(calcularIntervaloPrueba(30.1, '6:30 - 6:45', 900, 1800)).toEqual('6:00 - 6:15')
+  it('La Victoria -> Padre Anchieta - La Laguna, Hora prevista de llegada: 7:30 - 7:45 ', done => {
+    expect(calcularIntervaloPrueba(32.80888889, '7:30 - 7:45', 1800, 2700)).toEqual('7:00 - 7:15')
     done();
   })
   it('Los Realejos -> Camino La Hornera - Santa Cruz de Tenerife, Hora prevista de llegada: 7:30 - 7:45', done => {
-    expect(calcularIntervaloPrueba(37.23452381, '7:30 - 7:45', 900, 1800)).toEqual('7:00 - 7:15')
+    expect(calcularIntervaloPrueba(65.20555556, '7:30 - 7:45', 1800, 2700)).toEqual('6:30 - 6:45')
     done();
   })
   it('La Cuesta de la Villa -> Guajara, Hora prevista de llegada: 8:00 - 8:15', done => {
     expect(calcularIntervaloPrueba(14.01715686, '8:00 - 8:15', 0, 900)).toEqual('8:00 - 8:15')
     done();
   })
-  it('should return a departure interval', done => {
-    expect(calcularIntervaloPrueba(30.1, '6:30 - 6:45', 900, 1800)).toEqual('6:00 - 6:15')
+  it('Los Naranjeros - Tacoronte -> Aeropuerto Tenerife Norte, Hora prevista de llegada: 8:30 - 8:45', done => {
+    expect(calcularIntervaloPrueba(4.194444444, '8:30 - 8:45', 1800, 2700)).toEqual('8:30 - 8:45')
     done();
   })
-  it('should return a departure interval', done => {
-    expect(calcularIntervaloPrueba(30.1, '6:30 - 6:45', 900, 1800)).toEqual('6:00 - 6:15')
+  it('La Matanza -> Guajara, Hora prevista de llegada: 8:15 - 8:30', done => {
+    expect(calcularIntervaloPrueba(21.46746032, '8:15 - 8:30', 900, 1800)).toEqual('8:00 - 8:15')
     done();
   })
-  it('should return a departure interval', done => {
-    expect(calcularIntervaloPrueba(30.1, '6:30 - 6:45', 900, 1800)).toEqual('6:00 - 6:15')
+  it('Polígono San Nicolás -> Padre Anchieta - La Laguna, Hora prevista de llegada: 8:45 - 9:00', done => {
+    expect(calcularIntervaloPrueba(33.60263158, '8:45 - 9:00', 2700, 3600)).toEqual('8:15 - 8:30')
     done();
   })
 }
@@ -205,6 +205,8 @@ function calcularIntervaloPrueba (valor_promedio, hora, valor_inicial, valor_fin
   }
   return resultado
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////
 
 wss.on('connection', function (websocket) {
   websocket.on('close', function (websocket) {
