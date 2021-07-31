@@ -17,7 +17,7 @@
     </v-navigation-drawer>
 
     <v-main>
-      <request name="request" />
+      <calculate name="calculate"/>
     </v-main>
   </v-app>
 </template>
@@ -28,10 +28,14 @@
   export default {
     name: 'App',
     components: {
-      request: CalcularIntervalo,
+      calculate: CalcularIntervalo,
     },
     data: () => ({ 
       drawer: null 
     }),
   }
 </script>
+
+<style scoped>
+
+</style>

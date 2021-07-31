@@ -1,8 +1,8 @@
 <template>
-  <div class="button-request">
+  <div class="button-calculate">
     <v-btn
       elevation="5"
-      @click="requestData()"
+      @click="calcularIntervalo()"
     >
       Calcular intervalo de salida
     </v-btn>
@@ -30,7 +30,7 @@
         />
       </v-col>
     </v-row>
-    <v-simple-table>
+    <v-simple-table class="table">
       <template v-slot:default>
         <thead>
           <tr>
@@ -65,9 +65,8 @@
 </template>
 
 <script>
-
   export default {
-    name: 'RequestData',
+    name: 'CalcularIntervalo',
     data: function () {
       return {
         connection: null,
@@ -85,10 +84,9 @@
     },
 
     methods: {
-      requestData () {
+      calcularIntervalo () {
         const connection = new WebSocket(this.url)
         connection.onopen = () => {
-          // insert data as it arrives from the socket
           connection.send(`{ "salida": "${this.salida}", "destino": "${this.destino}", "hora": "${this.hora}" }`)          
           connection.onmessage = async (event) => {
             alert(event.data)
@@ -109,24 +107,13 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
-.button-request {
+.button-calculate {
   margin-top: 60px;
   margin-left: 60px;
 }
 
-#update {
-  width: 20px;
-  margin-left: 10px;
-  margin-top: 10px;
-}
-
-#update:hover {
-  background-color: lightslategrey;
-  cursor: pointer;
-}
-
-#list {
-  margin-left: 20px;
-  margin-top: 10px;
+.table {
+  margin-top: 40px;
+  margin-left: -10px;
 }
 </style>
