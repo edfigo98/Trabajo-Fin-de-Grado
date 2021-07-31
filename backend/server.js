@@ -2,15 +2,15 @@ const xlsxFile = require('read-excel-file/node')
 let WebSocketServer = require('ws').Server
 let wss = new WebSocketServer({port: 8181})
 let uuid = require('uuid')
-const fichero_1 = './preprocesado 6-7.xlsx'
-const fichero_2 = './preprocesado 7-8.xlsx'
-const fichero_3 = './preprocesado 8-9.xlsx'
+const fichero_1 = './data/preprocesado 6-7.xlsx'
+const fichero_2 = './data/preprocesado 7-8.xlsx'
+const fichero_3 = './data/preprocesado 8-9.xlsx'
 const expect = require('expect');
 let datos = []
 let array_datos = []
 let resultados = []
 let promedio = []
-let horas = ['6:00 - 6:15', '6:15 - 6:30', '6:30 - 6:45', '6:45 - 7:00', '7:00 - 7:15', '7:15 - 7:30', '7:30 - 7:45', '7:45 - 8:00', '8:00 - 8:15', '8:15 - 8:30', '8:30 - 8:45', '8:45 - 9:00',]
+let horas = ['5:00 - 5:15', '5:15 - 5:30', '5:30 - 5:45', '5:45 - 6:00', '6:00 - 6:15', '6:15 - 6:30', '6:30 - 6:45', '6:45 - 7:00', '7:00 - 7:15', '7:15 - 7:30', '7:30 - 7:45', '7:45 - 8:00', '8:00 - 8:15', '8:15 - 8:30', '8:30 - 8:45', '8:45 - 9:00',]
 let hora, origen, destino, minute_one, inicio, minute_two, fin, val_promedio
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -134,23 +134,19 @@ function calcularIntervalo (valor_promedio, hora, valor_inicial, valor_final, cl
   let contador = 0
   let intervalo_salida = []
 
-  if (valor < valor_inicial && hora === '6:00 - 6:15') {
-    cliente.ws.send('Debe salir antes de las 6:00')
-  } else {
-    if (valor < valor_inicial) {
-      while (valor < valor_inicial) {
-        valor_inicial -= 900
-        contador++
-        intervalo_salida = intervalo[intervalo.length - contador]
-        console.log('contador', contador)
-        console.log('interv', intervalo_salida)
-        console.log('valor_inicial', valor_inicial)
-        console.log('valor', valor)
-      }
-      cliente.ws.send('Debe salir entre: ' + intervalo_salida)
-    } else {
-      cliente.ws.send('Debe salir entre: ' + hora)
+  if (valor < valor_inicial) {
+    while (valor < valor_inicial) {
+      valor_inicial -= 900
+      contador++
+      intervalo_salida = intervalo[intervalo.length - contador]
+      console.log('contador', contador)
+      console.log('interv', intervalo_salida)
+      console.log('valor_inicial', valor_inicial)
+      console.log('valor', valor)
     }
+    cliente.ws.send('Debe salir entre: ' + intervalo_salida)
+  } else {
+    cliente.ws.send('Debe salir entre: ' + hora)
   }
 }
 
@@ -197,19 +193,15 @@ function calcularIntervaloPrueba (valor_promedio, hora, valor_inicial, valor_fin
   let intervalo_salida = []
   let resultado
 
-  if (valor < valor_inicial && hora === '6:00 - 6:15') {
-    resultado = 'Debe salir antes de las 6:00'
-  } else {
-    if (valor < valor_inicial) {
-      while (valor < valor_inicial) {
-        valor_inicial -= 900
-        contador++
-        intervalo_salida = intervalo[intervalo.length - contador]
-      }
-      resultado = intervalo_salida
-    } else {
-      resultado = hora
+  if (valor < valor_inicial) {
+    while (valor < valor_inicial) {
+      valor_inicial -= 900
+      contador++
+      intervalo_salida = intervalo[intervalo.length - contador]
     }
+    resultado = intervalo_salida
+  } else {
+    resultado = hora
   }
   return resultado
 }
