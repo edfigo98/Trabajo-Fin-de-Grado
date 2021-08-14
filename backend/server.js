@@ -112,6 +112,7 @@ function procesarDatosExcel (excel, origen, destino, hora, inicio, fin, cliente)
         resultados = array_datos.slice(291, 310)
       }
     }
+    console.log('Información intervalo: ', resultados)
     promedio = resultados.map(x => x).filter(x => x[0] == origen)
     calcularIntervalo(promedio[0][2], hora, inicio, fin, cliente)
     return array_datos
@@ -122,12 +123,7 @@ function procesarDatosExcel (excel, origen, destino, hora, inicio, fin, cliente)
 
 function calcularIntervalo (promedio, hora, inicio, fin, cliente) {
   let valor = promedio * 60
-  // console.log('valor promedio en minutos', promedio)
-  // console.log('valor promedio en segundos', valor)
   valor = fin - valor
-  // console.log('inicio en segundos', inicio)
-  // console.log('valor final - valor promedio (segundos)', valor)
-  // console.log('fin en segundos', fin)
   let intervalo = horas.filter(element => element < hora)
   let contador = 0
   let intervalo_salida = []
@@ -137,10 +133,6 @@ function calcularIntervalo (promedio, hora, inicio, fin, cliente) {
       inicio -= 900
       contador++
       intervalo_salida = intervalo[intervalo.length - contador]
-      // console.log('contador', contador)
-      // console.log('interv', intervalo_salida)
-      // console.log('inicio', inicio)
-      // console.log('valor', valor)
     }
     cliente.ws.send('Debe salir entre: ' + intervalo_salida)
   } else {
