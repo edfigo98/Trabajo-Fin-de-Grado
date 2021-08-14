@@ -1,0 +1,25 @@
+version: '3.7'
+services: 
+  frontend:
+    build:
+      context: "./frontend"
+      dockerfile: Dockerfile
+    image: tfg/frontend
+    container_name: "frontend"
+    ports:
+      - "8081:80"
+    networks:
+      - app
+  backend:
+    build:
+      context: "./backend"
+      dockerfile: Dockerfile
+    image: tfg-backend
+    container_name: "backend"
+    ports:
+      - "8181:8181"
+    networks:
+      - app
+networks:
+  app:
+    name: app_docker
