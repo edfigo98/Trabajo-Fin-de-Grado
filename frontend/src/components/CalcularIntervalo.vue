@@ -75,7 +75,7 @@
         destino: '',
         hora: '',
         lugares_salida: ['ID 1: Los Realejos', 'ID 3: Higuerita - Los Realejos', 'ID 12: Alcampo La Villa', 'ID 17: Polígono San Nicolás', 'ID 26: El Ramal - La Orotava', 'ID 36: La Cuesta de la Villa', 'ID 43: La Quinta - Santa Úrsula', 'ID 47: Alteza - Santa Úrsula', 'ID 52: La Victoria', 'ID 59: La Matanza', 'ID 70: El Sauzal', 'ID 76: Tacoronte', 'ID 82: Los Naranjeros - Tacoronte', 'ID 92: Guamasa - La Laguna', 'ID 96: Aeropuerto Tenerife Norte', 'ID 108: Padre Anchieta - La Laguna', 'ID 113: Guajara'],
-        lugares_destino: ['ID 96: Aeropuerto Tenerife Norte', 'ID 108: Padre Anchieta - La Laguna', 'ID 113: Guajara', 'ID: 120: Camino La Hornera - Santa Cruz de Tenerife'],
+        lugares_destino: ['ID 96: Aeropuerto Tenerife Norte', 'ID 108: Padre Anchieta - La Laguna', 'ID 113: Guajara', 'ID: 120: Dirección Santa Cruz'],
         horas: ['6:00 - 6:15', '6:15 - 6:30', '6:30 - 6:45', '6:45 - 7:00', '7:00 - 7:15', '7:15 - 7:30', '7:30 - 7:45', '7:45 - 8:00', '8:00 - 8:15', '8:15 - 8:30', '8:30 - 8:45', '8:45 - 9:00',],
         origen: [],
         destino_: [],

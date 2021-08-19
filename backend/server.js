@@ -149,7 +149,7 @@ module.exports.departureInterval = function () {
     expect(calcularIntervaloPrueba(32.80888889, '7:30 - 7:45', 1800, 2700)).toEqual('7:00 - 7:15')
     done();
   })
-  it('Los Realejos -> Camino La Hornera - Santa Cruz de Tenerife, Hora prevista de llegada: 7:30 - 7:45', done => {
+  it('Los Realejos -> Dirección Santa Cruz, Hora prevista de llegada: 7:30 - 7:45', done => {
     expect(calcularIntervaloPrueba(65.20555556, '7:30 - 7:45', 1800, 2700)).toEqual('6:30 - 6:45')
     done();
   })
